@@ -66,12 +66,23 @@
 
   var sectionOrder = ['hero','about','lane-se','lane-sec','contact'];
   function updateActiveRail(){
-    var scrollPos = window.scrollY + window.innerHeight * 0.35;
+    var focusTop = window.innerWidth <= 768 ? window.innerHeight * 0.2 : window.innerHeight * 0.26;
+    var focusBottom = window.innerWidth <= 768 ? window.innerHeight * 0.72 : window.innerHeight * 0.68;
     var current = 'hero';
+    var bestVisible = -1;
+
     sectionOrder.forEach(function(key){
       var el = railTargets[key];
-      if(el && el.offsetTop <= scrollPos){ current = key; }
+      if(!el) return;
+
+      var rect = el.getBoundingClientRect();
+      var visible = Math.min(rect.bottom, focusBottom) - Math.max(rect.top, focusTop);
+      if(visible > bestVisible){
+        bestVisible = visible;
+        current = key;
+      }
     });
+
     railItems.forEach(function(item){
       item.classList.toggle('active', item.getAttribute('data-target') === current);
     });
